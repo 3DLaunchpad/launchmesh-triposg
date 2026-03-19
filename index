@@ -1,1 +1,462 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LaunchMesh · Free GPU Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #040d1a;
+  --surface: #071628;
+  --surface2:#0a1e35;
+  --border:  #0e2d50;
+  --orange:  #f7931a;
+  --orange2: #ffb347;
+  --blue:    #1e90ff;
+  --blue2:   #4db8ff;
+  --text:    #e8f4ff;
+  --muted:   #4a7a9b;
+  --green:   #34d399;
+  --yellow:  #fbbf24;
+  --red:     #f87171;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Exo 2", sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Starfield */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(30,144,255,.10) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(247,147,26,.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%, rgba(30,144,255,.04) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at  8% 12%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 35%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 38%  7%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 22%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 82% 14%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 12% 68%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 48% 88%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 63% 72%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 93% 42%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 92%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 77% 30%, rgba(255,255,255,.4) 0%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* ── Header ── */
+header {
+  text-align: center;
+  padding: 60px 0 48px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+
+.logo-badge {
+  display: inline-block;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 16px;
+  animation: fadeUp .6s ease both;
+}
+
+h1 {
+  font-family: "Rajdhani", sans-serif;
+  font-size: clamp(2.4rem, 8vw, 4rem);
+  font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; line-height: 1;
+  margin-bottom: 12px;
+  animation: fadeUp .7s ease both;
+}
+h1 .blue   { color: var(--blue2); }
+h1 .orange { color: var(--orange); }
+
+.tagline {
+  color: var(--muted); font-size: .9rem;
+  letter-spacing: .15em; text-transform: uppercase; font-weight: 300;
+  margin-bottom: 20px;
+  animation: fadeUp .8s ease both;
+}
+
+.header-note {
+  display: inline-block;
+  background: rgba(247,147,26,.1);
+  border: 1px solid rgba(247,147,26,.3);
+  color: var(--orange2);
+  font-size: .75rem; padding: 6px 18px; border-radius: 100px;
+  letter-spacing: .15em; font-weight: 600;
+  animation: fadeUp .9s ease both;
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), var(--blue), var(--border), transparent);
+  margin: 36px 0;
+}
+
+/* ── Section title ── */
+.section-label {
+  font-family: "Rajdhani", sans-serif;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── Platform cards 3x3 grid ── */
+.platforms {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 48px;
+}
+@media (max-width: 700px) { .platforms { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .platforms { grid-template-columns: 1fr; } }
+
+.platform-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  display: flex; flex-direction: column;
+  padding: 26px 22px 22px;
+  transition: border-color .25s, transform .2s, box-shadow .25s;
+  text-decoration: none; color: inherit;
+  animation: fadeUp .5s ease both;
+  position: relative; min-height: 230px;
+}
+.platform-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(247,147,26,.14);
+}
+.platform-card::before {
+  content: "";
+  position: absolute; inset: 0; border-radius: 18px;
+  background: radial-gradient(ellipse at top left, rgba(30,144,255,.05) 0%, transparent 65%);
+  opacity: 0; transition: opacity .25s; pointer-events: none;
+}
+.platform-card:hover::before { opacity: 1; }
+.platform-card:nth-child(1) { animation-delay: .05s; }
+.platform-card:nth-child(2) { animation-delay: .10s; }
+.platform-card:nth-child(3) { animation-delay: .15s; }
+.platform-card:nth-child(4) { animation-delay: .20s; }
+.platform-card:nth-child(5) { animation-delay: .25s; }
+.platform-card:nth-child(6) { animation-delay: .30s; }
+
+.platform-rank {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 2rem; font-weight: 700;
+  color: var(--border); line-height: 1;
+  margin-bottom: 10px; transition: color .2s;
+}
+.platform-card:hover .platform-rank { color: var(--orange); }
+
+.platform-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.platform-top  { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+
+.platform-name {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 1.05rem; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--text); line-height: 1.2;
+}
+
+.badge-pill {
+  font-size: .57rem; padding: 2px 7px; border-radius: 100px;
+  font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  font-family: "Exo 2", sans-serif; white-space: nowrap; margin-top: 2px;
+}
+.badge-green  { background: rgba(52,211,153,.12); border: 1px solid rgba(52,211,153,.3); color: var(--green); }
+.badge-yellow { background: rgba(251,191,36,.12);  border: 1px solid rgba(251,191,36,.3);  color: var(--yellow); }
+.badge-blue   { background: rgba(77,184,255,.12);  border: 1px solid rgba(77,184,255,.3);  color: var(--blue2); }
+
+.platform-desc { font-size: .78rem; color: var(--muted); line-height: 1.55; flex: 1; }
+
+.platform-stats {
+  display: flex; flex-direction: column; gap: 3px;
+  margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border);
+}
+.stat { font-size: .64rem; font-family: "Exo 2", sans-serif; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.stat-gpu   { color: var(--blue2); }
+.stat-quota { color: var(--orange2); }
+.stat-note  { color: var(--muted); }
+
+.platform-arrow {
+  display: inline-block; margin-top: 12px;
+  font-size: .72rem; font-family: "Rajdhani", sans-serif;
+  font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--border); transition: color .2s;
+}
+.platform-card:hover .platform-arrow { color: var(--orange); }
+
+/* ── Tip box ── */
+.tip-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--orange);
+  border-radius: 12px; padding: 20px 24px;
+  margin-bottom: 48px;
+}
+.tip-title {
+  font-family: "Rajdhani", sans-serif;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 10px;
+}
+.tip-text { font-size: .85rem; color: var(--muted); line-height: 1.7; }
+.tip-text strong { color: var(--text); }
+
+/* ── Colab link ── */
+.colab-banner {
+  background: linear-gradient(135deg, rgba(247,147,26,.12), rgba(255,179,71,.06));
+  border: 1px solid rgba(247,147,26,.3);
+  border-radius: 16px; padding: 28px 32px;
+  text-align: center; margin-bottom: 48px;
+}
+.colab-title {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 1.1rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.colab-desc { font-size: .82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+.colab-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, var(--orange), var(--orange2));
+  color: #040d1a; border: none; border-radius: 10px;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 1rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; cursor: pointer;
+  text-decoration: none;
+  transition: all .2s;
+  box-shadow: 0 4px 20px rgba(247,147,26,.3);
+}
+.colab-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(247,147,26,.45); }
+
+/* ── Footer ── */
+footer {
+  text-align: center; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  color: var(--muted); font-size: .72rem;
+  letter-spacing: .15em; text-transform: uppercase; line-height: 2;
+}
+footer a { color: var(--blue2); text-decoration: none; }
+footer a:hover { color: var(--orange); }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-badge">&#9733; 3D Launchpad Community</div>
+    <h1><span class="blue">Launch</span><span class="orange">Mesh</span></h1>
+    <p class="tagline">Free GPU Hub &nbsp;&middot;&nbsp; Image to 3D &nbsp;&middot;&nbsp; TripoSG</p>
+    <span class="header-note">When one GPU runs out &mdash; switch to the next &#8594;</span>
+  </header>
+
+  <!-- Platforms -->
+  <div class="colab-banner">
+    <div class="colab-title">&#128640; LaunchMesh TripoSG Notebook</div>
+    <div class="colab-desc">
+      Open this notebook on whichever platform you choose below.<br>
+      Each person gets their own independent GPU session &mdash; no shared quota.
+    </div>
+    <a class="colab-btn" href="https://colab.research.google.com/github/chopsitv/launchmesh-triposg/blob/main/LaunchMesh_TripoSG.ipynb" target="_blank">
+      Open on Google Colab &rarr;
+    </a>
+  </div>
+
+  <div class="section-label">Free GPU Platforms &mdash; ordered by best for TripoSG</div>
+  <div class="platforms">
+
+    <a class="platform-card" href="https://colab.research.google.com/github/chopsitv/launchmesh-triposg/blob/main/LaunchMesh_TripoSG.ipynb" target="_blank">
+      <div class="platform-rank">01</div>
+      <div class="platform-body">
+        <div class="platform-top">
+          <span class="platform-name">Google Colab</span>
+          <span class="badge-pill badge-green">Easiest</span>
+          <span class="badge-pill badge-blue">Recommended</span>
+        </div>
+        <div class="platform-desc">The simplest way to run LaunchMesh. No sign-up friction, instant T4 GPU, runs right in your browser.</div>
+        <div class="platform-stats">
+          <span class="stat stat-gpu">T4 GPU &middot; 15GB VRAM</span>
+          <span class="stat stat-quota">Daily free quota</span>
+          <span class="stat stat-note">Resets every day</span>
+        </div>
+      </div>
+      <div class="platform-arrow">Open &rarr;</div>
+    </a>
+
+    <a class="platform-card" href="https://www.kaggle.com/kernels" target="_blank">
+      <div class="platform-rank">02</div>
+      <div class="platform-body">
+        <div class="platform-top">
+          <span class="platform-name">Kaggle</span>
+          <span class="badge-pill badge-green">30 hrs/week</span>
+        </div>
+        <div class="platform-desc">More generous quota than Colab with stable sessions. Create a new notebook, enable GPU, paste the LaunchMesh code.</div>
+        <div class="platform-stats">
+          <span class="stat stat-gpu">T4 or P100 &middot; 16GB</span>
+          <span class="stat stat-quota">30 hours per week</span>
+          <span class="stat stat-note">Resets weekly</span>
+        </div>
+      </div>
+      <div class="platform-arrow">Open &rarr;</div>
+    </a>
+
+    <a class="platform-card" href="https://lightning.ai/studios" target="_blank">
+      <div class="platform-rank">03</div>
+      <div class="platform-body">
+        <div class="platform-top">
+          <span class="platform-name">Lightning AI</span>
+          <span class="badge-pill badge-yellow">22 hrs/month</span>
+        </div>
+        <div class="platform-desc">Full VS Code in the cloud with persistent storage. Your packages stay installed between sessions &mdash; no re-downloading models!</div>
+        <div class="platform-stats">
+          <span class="stat stat-gpu">T4 / L4 / A10G GPU</span>
+          <span class="stat stat-quota">22 hours per month</span>
+          <span class="stat stat-note">Persistent storage</span>
+        </div>
+      </div>
+      <div class="platform-arrow">Open &rarr;</div>
+    </a>
+
+    <a class="platform-card" href="https://studiolab.sagemaker.aws/" target="_blank">
+      <div class="platform-rank">04</div>
+      <div class="platform-body">
+        <div class="platform-top">
+          <span class="platform-name">SageMaker Studio Lab</span>
+          <span class="badge-pill badge-blue">No credit card</span>
+        </div>
+        <div class="platform-desc">Free GPU from Amazon with no AWS account or credit card needed. 4 GPU hours per day with persistent storage.</div>
+        <div class="platform-stats">
+          <span class="stat stat-gpu">T4 GPU</span>
+          <span class="stat stat-quota">4 hours per day</span>
+          <span class="stat stat-note">Apply for access</span>
+        </div>
+      </div>
+      <div class="platform-arrow">Open &rarr;</div>
+    </a>
+
+    <a class="platform-card" href="https://www.paperspace.com/gradient/notebooks" target="_blank">
+      <div class="platform-rank">05</div>
+      <div class="platform-body">
+        <div class="platform-top">
+          <span class="platform-name">Paperspace Gradient</span>
+          <span class="badge-pill badge-green">Persistent</span>
+        </div>
+        <div class="platform-desc">Best persistent storage of all platforms &mdash; your environment and downloaded models survive between sessions.</div>
+        <div class="platform-stats">
+          <span class="stat stat-gpu">Free-GPU tier</span>
+          <span class="stat stat-quota">Limited free hours</span>
+          <span class="stat stat-note">Files persist between sessions</span>
+        </div>
+      </div>
+      <div class="platform-arrow">Open &rarr;</div>
+    </a>
+
+    <a class="platform-card" href="https://huggingface.co/spaces/VAST-AI/TripoSG" target="_blank">
+      <div class="platform-rank">06</div>
+      <div class="platform-body">
+        <div class="platform-top">
+          <span class="platform-name">Hugging Face Space</span>
+          <span class="badge-pill badge-blue">No setup</span>
+        </div>
+        <div class="platform-desc">The official TripoSG demo by VAST-AI. No notebook needed &mdash; just upload and go. May have a queue but always free.</div>
+        <div class="platform-stats">
+          <span class="stat stat-gpu">ZeroGPU H200</span>
+          <span class="stat stat-quota">Per-user quota</span>
+          <span class="stat stat-note">No setup required</span>
+        </div>
+      </div>
+      <div class="platform-arrow">Open &rarr;</div>
+    </a>
+
+  </div>
+
+  <!-- Unlimited Low Quality Section -->
+  <div class="divider"></div>
+  <div class="section-label">Unlimited &mdash; No quota, no wait, instant results</div>
+  <div class="platforms" style="grid-template-columns: 1fr;">
+
+    <a class="platform-card" href="https://huggingface.co/spaces/3dlaunchpad/launchmesh-image-to-3d" target="_blank" style="min-height:auto; flex-direction:row; align-items:center; gap:24px; padding:28px 28px;">
+      <div style="flex-shrink:0;">
+        <div class="platform-rank" style="margin-bottom:0; font-size:2.8rem;">&#8734;</div>
+      </div>
+      <div class="platform-body" style="flex-direction:row; align-items:center; gap:0;">
+        <div style="flex:1;">
+          <div class="platform-top">
+            <span class="platform-name">LaunchMesh · Original Space</span>
+            <span class="badge-pill badge-green">Unlimited</span>
+            <span class="badge-pill badge-yellow">No GPU quota</span>
+          </div>
+          <div class="platform-desc" style="margin-top:6px;">Your original Hugging Face Space running TripoSR. Lower quality mesh than TripoSG but completely unlimited &mdash; no quota, no wait, no account needed. Perfect when you just need a quick result fast.</div>
+          <div class="platform-stats" style="flex-direction:row; gap:16px; border-top:none; padding-top:8px;">
+            <span class="stat stat-gpu">CPU &middot; TripoSR</span>
+            <span class="stat stat-quota">Unlimited generations</span>
+            <span class="stat stat-note">Lower detail &middot; Always available</span>
+          </div>
+        </div>
+      </div>
+      <div class="platform-arrow" style="flex-shrink:0; font-size:.9rem;">Open &rarr;</div>
+    </a>
+
+  </div>
+  <div class="tip-box">
+    <div class="tip-title">&#9889; Pro tip &mdash; Rotate platforms for unlimited free GPU</div>
+    <div class="tip-text">
+      <strong>Monday&ndash;Wednesday:</strong> Use Kaggle (30 hrs/week resets Monday)<br>
+      <strong>Thursday&ndash;Friday:</strong> Switch to Google Colab (daily quota resets)<br>
+      <strong>Weekend:</strong> Use Lightning AI for longer uninterrupted sessions<br>
+      <strong>Always free backup:</strong> Hugging Face Space &mdash; no setup, no quota waiting<br><br>
+      By rotating across platforms you can realistically get <strong>50+ hours of free GPU time per week</strong> &mdash; enough to generate hundreds of 3D models.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Footer -->
+  <footer>
+    <a href="https://www.skool.com/miless-group-4588" target="_blank">3D Launchpad Community</a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://github.com/chopsitv/launchmesh-triposg" target="_blank">GitHub</a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://github.com/VAST-AI-Research/TripoSG" target="_blank">TripoSG by VAST-AI</a>
+    <br>
+    Free &middot; Open Source &middot; No ads &middot; No tracking
+  </footer>
+
+</div>
+</body>
+</html>
